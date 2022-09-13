@@ -22,7 +22,7 @@ typedef enum {
 typedef struct {
     sram_cacheline_state_t state;
     uint64_t tag;
-    uint8_t block[(1 >> SRAM_CACHE_OFFSET_LENGTH)];
+    uint8_t block[(1 << SRAM_CACHE_OFFSET_LENGTH)];
 } sram_cacheline_t;
 
 // cache set
@@ -31,7 +31,7 @@ typedef struct {
 } sram_cacheset_t;
 
 typedef struct {
-    sram_cacheset_t sets[(1 >> SRAM_CACHE_INDEX_LENGTH)];
+    sram_cacheset_t sets[(1 << SRAM_CACHE_INDEX_LENGTH)];
 } sram_cache_t;
 
 static sram_cache_t cache;
