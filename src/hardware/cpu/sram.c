@@ -6,11 +6,18 @@
 
 #define NUM_CACHE_LINE_PER_SET (8)
 
+// write-back and write-allocate
 typedef enum {
     CACHE_LINE_INVALID,
     CACHE_LINE_CLEAN,
     CACHE_LINE_DIRTY
 } sram_cacheline_state_t;
+
+// write-through and no-write-allocate
+typedef enum {
+    CACHE_LINE_INVALID2,
+    CACHE_LINE_VALID,
+} sram_cacheline_state_t2;
 
 
 /**
@@ -56,7 +63,20 @@ uint8_t sram_cache_read(address_t paddr) {
 // write a byte to paddr
 // TODO
 void sram_cache_write(address_t paddr, uint8_t data) {
-    return ;
+    sram_cacheset_t set = cache.sets[paddr.CI];
+    for (int i = 0; i < NUM_CACHE_LINE_PER_SET; ++ i) {
+        sram_cacheline_t line = set.lines[i];
+        if (line.state != CACHE_LINE_INVALID && line.tag == paddr.CT) {
+            // cache hit
+            line.block[paddr.CO] = data;
+            // TODO write to memory
+            return ;
+        }
+
+        // cache miss, load from memory
+        // TODO: upate LRU
+        // TODO: select one victim by replacement policy if set is full
+    }
 }
 
 #endif
