@@ -5,7 +5,10 @@ SRC = ./src
 
 EXE = program
 
-CODE =  ./src/hardware/cpu/sram.c ./src/main.c
+CODE =  ./src/hardware/cpu/sram.c ./src/hardware/cpu/mmu.c\
+./src/hardware/memory/instruction.c ./src/hardware/memory/dram.c \
+./src/hardware/disk/code.c \
+./src/main.c
 
 .PHONY: program
 main:

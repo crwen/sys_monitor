@@ -1,7 +1,7 @@
 #ifndef SRAM_GUARD
 #define SRAM_GUARD
 
-#include "hardware/headers/address.h"
+#include "hardware/cpu/address.h"
 #include <stdint.h>
 
 #define NUM_CACHE_LINE_PER_SET (8)
