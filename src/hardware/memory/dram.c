@@ -1,5 +1,8 @@
 #include <stdint.h>
+#include <stdio.h>
 #include "hardware/memory/dram.h"
+#include "hardware/cpu/register.h"
+#include "hardware/cpu/mmu.h"
 
 #define SRAM_CACHE_SETTING 0
 
@@ -35,4 +38,32 @@ void write64bits_dram(uint64_t paddr, uint64_t data) {
     mm[paddr + 5] = (data >> 40) & 0xff;
     mm[paddr + 6] = (data >> 48) & 0xff;
     mm[paddr + 7] = (data >> 56) & 0xff;
+}
+
+
+void print_register() {
+    printf("rax = %16llx\trbx = %16llx\trcx = %16llx\trdx = %16llx\n", reg.rax, reg.rbx, reg.rcx, reg.rdx);
+    printf("rsi = %16llx\trdi = %16llx\trbp = %16llx\trsp = %16llx\n", reg.rsi, reg.rdi, reg.rbp, reg.rsp);
+    printf("rip = %16llx\n", reg.rip);
+
+}
+
+void print_stack() {
+    int n = 10;
+
+    uint64_t *high = (uint64_t*)&mm[va2pa(reg.rsp)];
+    high = &high[n];
+
+    uint64_t rsp_start = reg.rsp + n * 8;
+
+    for (int i = 0; i < 2 * n; ++ i) {
+        uint64_t *ptr = (uint64_t *)(high - i);
+        printf("0x%llx : %16llx", rsp_start, (uint64_t)*ptr);
+
+        if (i == n) {
+            printf(" <== rsp");
+        }
+        rsp_start = rsp_start - 8;
+        printf("\n");
+    }
 }

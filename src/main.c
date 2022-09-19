@@ -29,6 +29,8 @@ int main() {
     uint64_t pa = va2pa(0x7ffffffee210);
     printf("%16llx\n", *((uint64_t *)(&mm[pa])));
 
+    print_register();
+    print_stack();
     // run inst
     for (int i = 0; i < 15; i ++) {
         // instruction_cycle();
