@@ -72,11 +72,9 @@ void add_reg_reg_handler(uint64_t src, uint64_t dst) {
     reg.rip = reg.rip + sizeof(inst_t);
 }
 
-void call_handler(uint64_t src, uint64_t dst) {
+void push_reg_handler(uint64_t src, uint64_t dst) {
     // rsp - 8
     reg.rsp = reg.rsp - 8;
-    // write return address to rsp memory
-    write64bits_dram(va2pa(reg.rip), reg.rip + sizeof(inst_t));
-    // jmp 
-    reg.rip = src;
+    write64bits_dram(va2pa(reg.rsp), *(uint64_t *)src);
+    reg.rip = reg.rip + sizeof(inst_t);
 }
