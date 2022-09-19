@@ -32,8 +32,10 @@ int main() {
     print_register();
     print_stack();
     // run inst
-    for (int i = 0; i < 15; i ++) {
-        // instruction_cycle();
+    for (int i = 0; i < 3; i ++) {
+        instruction_cycle();
+        print_register();
+        print_stack();
     }
 
 
@@ -68,6 +70,7 @@ int main() {
     } else {
         printf("memory not match\n");
     }
+
 
     return 0;
 }

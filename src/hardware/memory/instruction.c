@@ -1,6 +1,8 @@
+#include <stdio.h>
 #include <stdint.h>
 #include "hardware/cpu/register.h"
 #include "hardware/memory/instruction.h"
+#include "hardware/memory/dram.h"
 #include "hardware/cpu/mmu.h"
 
 
@@ -50,11 +52,14 @@ void instruction_cycle() {
 
     // execute
     handler(src, dst);
+
+    printf("    %s\n", instr->code);
 }
 
 void init_handler_table() {
     handler_table[mov_reg_reg] = &mov_reg_reg_handler;
     handler_table[add_reg_reg] = &add_reg_reg_handler;
+    handler_table[call] = &call_handler;
 }
 
 void mov_reg_reg_handler(uint64_t src, uint64_t dst) {
@@ -65,4 +70,13 @@ void mov_reg_reg_handler(uint64_t src, uint64_t dst) {
 void add_reg_reg_handler(uint64_t src, uint64_t dst) {
     *(uint64_t *)dst = *(uint64_t *)dst + *(uint64_t *)src;
     reg.rip = reg.rip + sizeof(inst_t);
+}
+
+void call_handler(uint64_t src, uint64_t dst) {
+    // rsp - 8
+    reg.rsp = reg.rsp - 8;
+    // write return address to rsp memory
+    write64bits_dram(va2pa(reg.rip), reg.rip + sizeof(inst_t));
+    // jmp 
+    reg.rip = src;
 }
