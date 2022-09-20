@@ -1,5 +1,6 @@
 CC = /usr/bin/gcc
-CFLAGS = -Wall -g -O2 -Werror -std=gnu99
+# CFLAGS = -Wall -g -O2 -Werror -std=gnu99
+CFLAGS = -Wall -g -O2 -std=gnu99
 
 SRC = ./src
 
@@ -13,7 +14,6 @@ CODE =  ./src/hardware/cpu/sram.c ./src/hardware/cpu/mmu.c\
 .PHONY: program
 main:
 	$(CC) $(CFLAGS) -I$(SRC) $(CODE) -o $(EXE)
-
-
-run:
 	./$(EXE)
+clean:
+	rmm -f *.o

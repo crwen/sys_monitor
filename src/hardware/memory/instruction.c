@@ -33,11 +33,12 @@ static uint64_t decode_od(od_t od) {
         } else if (od.type == MM_IMM_REG2_S) {
             vaddr = od.imm + od.scal * (*(od.reg2));
         } else if (od.type == MM_REG1_REG2_S) {
-            vaddr = *(od.reg1) + od.scal * (*(od.reg2)); } else if (od.type == MM_IMM_REG1_REG2_S) {
+            vaddr = *(od.reg1) + od.scal * (*(od.reg2)); 
+        } else if (od.type == MM_IMM_REG1_REG2_S) {
             vaddr = od.imm +  *(od.reg1) + od.scal * (*(od.reg2));
         }
 
-        return va2pa(vaddr);
+        return vaddr;
     }
 }
 
@@ -90,6 +91,7 @@ void add_reg_reg_handler(uint64_t src, uint64_t dst) {
 void push_reg_handler(uint64_t src, uint64_t dst) {
     // rsp - 8
     reg.rsp = reg.rsp - 8;
+    // write src to stack
     write64bits_dram(va2pa(reg.rsp), *(uint64_t *)src);
     reg.rip = reg.rip + sizeof(inst_t);
 }
@@ -113,6 +115,7 @@ void call_handler(uint64_t src, uint64_t dst) {
 
 void ret_handler(uint64_t src, uint64_t dst) {
     // reg.rbp = read64bits_dram(va2pa(reg.rbp));
-    reg.rip = read64bits_dram(va2pa(reg.rsp));
+    uint64_t ret_addr = read64bits_dram(va2pa(reg.rsp));
     reg.rsp = reg.rsp + 8;
+    reg.rip = ret_addr;
 }
