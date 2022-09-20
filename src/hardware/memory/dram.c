@@ -42,10 +42,9 @@ void write64bits_dram(uint64_t paddr, uint64_t data) {
 
 
 void print_register() {
-    printf("rax = %16llx\trbx = %16llx\trcx = %16llx\trdx = %16llx\n", reg.rax, reg.rbx, reg.rcx, reg.rdx);
-    printf("rsi = %16llx\trdi = %16llx\trbp = %16llx\trsp = %16llx\n", reg.rsi, reg.rdi, reg.rbp, reg.rsp);
-    printf("rip = %16llx\n", reg.rip);
-
+    printf("rax = %16lx\trbx = %16lx\trcx = %16lx\trdx = %16lx\n", reg.rax, reg.rbx, reg.rcx, reg.rdx);
+    printf("rsi = %16lx\trdi = %16lx\trbp = %16lx\trsp = %16lx\n", reg.rsi, reg.rdi, reg.rbp, reg.rsp);
+    printf("rip = %16lx\n", reg.rip);
 }
 
 void print_stack() {
@@ -58,7 +57,7 @@ void print_stack() {
 
     for (int i = 0; i < 2 * n; ++ i) {
         uint64_t *ptr = (uint64_t *)(high - i);
-        printf("0x%llx : %16llx", rsp_start, (uint64_t)*ptr);
+        printf("0x%lx : %16lx", rsp_start, (uint64_t)*ptr);
 
         if (i == n) {
             printf(" <== rsp");

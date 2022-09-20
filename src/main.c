@@ -11,7 +11,7 @@ int main() {
 
     reg.rax = 0x12340000;
     reg.rbx = 0x0;
-    reg.rcx = 0x800660;
+    reg.rcx = 0x8000660;
     reg.rdx = 0xabcd;
     reg.rsi = 0x7ffffffee2f8;
     reg.rdi = 0x1;
@@ -27,12 +27,12 @@ int main() {
     write64bits_dram(va2pa(0x7ffffffee1f0), 0x08000660); // rsp
 
     uint64_t pa = va2pa(0x7ffffffee210);
-    printf("%16llx\n", *((uint64_t *)(&mm[pa])));
+    printf("%16lx\n", *((uint64_t *)(&mm[pa])));
 
     print_register();
     print_stack();
     // run inst
-    for (int i = 0; i < 5; i ++) {
+    for (int i = 0; i < 15; i ++) {
         instruction_cycle();
         print_register();
         print_stack();
@@ -45,7 +45,7 @@ int main() {
 
     match = match && (reg.rax == 0x1234abcd);
     match = match && (reg.rbx == 0x0);
-    match = match && (reg.rcx == 0x08000600);
+    match = match && (reg.rcx == 0x08000660);
     match = match && (reg.rdx == 0x12340000);
     match = match && (reg.rsi == 0xabcd);
     match = match && (reg.rdi == 0x12340000);
@@ -64,7 +64,7 @@ int main() {
     match = match && (read64bits_dram( va2pa(0x7ffffffee1f8)) == 0x12340000);
     match = match && (read64bits_dram( va2pa(0x7ffffffee1f0)) == 0x08000660);// rspA
 
-    printf("%16llx\n", read64bits_dram( va2pa(0x7ffffffee210)));
+    printf("%16lx\n", read64bits_dram( va2pa(0x7ffffffee210)));
     if (match) {
         printf("memory match\n");
     } else {
