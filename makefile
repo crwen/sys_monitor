@@ -1,19 +1,24 @@
-CC = /usr/bin/gcc
-# CFLAGS = -Wall -g -O2 -Werror -std=gnu99
-CFLAGS = -Wall -g -O2 -std=gnu99
+CC = /usr/bin/gcc-7
+CFLAGS = -Wall -g -O2 -Werror -std=gnu99 -Wno-unused-function
 
-SRC = ./src
+EXE_HARDWARE = exe_hardware
 
-EXE = program
+SRC_DIR = ./src
 
-CODE =  ./src/hardware/cpu/sram.c ./src/hardware/cpu/mmu.c\
-./src/hardware/memory/instruction.c ./src/hardware/memory/dram.c \
-./src/hardware/disk/code.c \
-./src/main.c
+# debug
+COMMON = $(SRC_DIR)/common/print.c $(SRC_DIR)/common/convert.c
 
-.PHONY: program
-main:
-	$(CC) $(CFLAGS) -I$(SRC) $(CODE) -o $(EXE)
-	./$(EXE)
+# hardware
+CPU =$(SRC_DIR)/hardware/cpu/mmu.c $(SRC_DIR)/hardware/cpu/isa.c
+MEMORY = $(SRC_DIR)/hardware/memory/dram.c
+
+# main
+MAIN_HARDWARE = $(SRC_DIR)/main_hardware.c
+
+.PHONY:hardware
+hardware:
+	$(CC) $(CFLAGS) -I$(SRC_DIR) $(COMMON) $(CPU) $(MEMORY) $(DISK) $(MAIN_HARDWARE) -o $(EXE_HARDWARE)
+	./$(EXE_HARDWARE)
+
 clean:
-	rmm -f *.o
+	rm -f *.o *~ $(EXE_HARDWARE)
