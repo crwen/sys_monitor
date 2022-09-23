@@ -9,6 +9,7 @@ uint64_t string2uint(const char *str) {
     return string2uint_range(str, 0, -1);
 }
 
+// TODO conver string to uint64_t(dec or hex)
 uint64_t string2uint_range(const char *str, int start, int end) {
     return 0;
 }

@@ -113,8 +113,31 @@ static void parse_instruction(const char *str, inst_t *inst, core_t *cr) {
 
 }
 
+// str: assembly code string, e.g. mov $123 %rax
+// od: pointer to the address to store the parsed operand
+// cr: active core processor
 static void parse_operand(const char *str, od_t *od, core_t *cr) {
+    od->type = EMPTY;
+    od->imm = 0;
+    od->reg1 = 0;
+    od->reg2 = 0;
+    od->scal = 0;
 
+    int str_len = strlen(str);
+    if (str_len == 0) {
+        return ;
+    }
+
+    if (str[0] == '$') {
+        // immediate number
+        od->type = IMM;
+        od->imm = string2uint_range(str, 0, -1); // TODO
+    } else if (str[0] == '%') {
+        // register
+        od->type = REG;
+    } else {
+        // memory
+    }
 }
 
 /*======================================*/
