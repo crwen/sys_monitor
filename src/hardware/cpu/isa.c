@@ -131,7 +131,7 @@ static void parse_operand(const char *str, od_t *od, core_t *cr) {
     if (str[0] == '$') {
         // immediate number
         od->type = IMM;
-        od->imm = string2uint_range(str, 0, -1); // TODO
+        od->imm = string2uint_range(str, 1, -1); // TODO
     } else if (str[0] == '%') {
         // register
         od->type = REG;
