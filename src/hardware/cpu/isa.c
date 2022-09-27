@@ -192,6 +192,91 @@ static void parse_operand(const char *str, od_t *od, core_t *cr) {
         return ;
     } else {
         // memory
+        char imm[64] = {0};
+        int imm_len = 0;
+        char reg1[8] = {0};
+        int reg1_len = 0;
+        char reg2[8] = {0};
+        int reg2_len = 0;
+        char scal[2] = {0};
+        int scal_len = 0;
+
+        int count_parentheses = 0;
+        int count_comma = 0;
+        
+
+        for (int i = 0; i < str_len; i ++) {
+            if (str[i] == '(' || str[i] == ')') {
+                count_parentheses ++;
+                continue;
+            } else if (str[i] == ',') {
+                count_comma ++;
+                continue;
+            } else {
+                if (count_parentheses == 0) {
+                    // imm
+                    imm[imm_len] = str[i];
+                    imm_len ++;
+                } else if (count_comma == 1) {
+                    // ???(???,xxx
+                    reg2[reg2_len] = str[i];
+                    reg2_len ++;
+                } else if (count_comma == 2) {
+                    // ???(???,???,xxx
+                    scal[scal_len] = str[i];
+                    scal_len ++;
+                }
+            }
+        }
+
+        // parse imm
+        if (imm_len > 0) {
+            od->imm = string2uint(imm);
+            if (count_parentheses == 0) {
+               // imm
+                od->type = MEM_IMM;
+                return;
+            }
+        }
+       // parse scale
+        if (scal_len > 0){
+            od->imm = string2uint(scal);
+            if (od->scal != 1 && od->scal != 2 && od->scal != 4 && od->scal != 8) {
+                debug_printf(DEBUG_PARSEINST, "parse operand %s\n    scale number %s must be 1,2,4,8\n", scal);
+                exit(0);
+            }
+        }
+        // pars2 reg1
+        if (reg1_len > 0) {
+            od->reg1 = reflect_register(reg1, cr);
+        }
+        // parse reg2
+        if (reg2_len > 0) {
+            od->reg2 = reflect_register(reg2, cr);
+        }
+
+        // set types
+        if (count_comma == 0) {
+            // imm(reg1); (reg1)
+            od->type = MEM_REG1;
+        } else if (count_comma == 1) {
+            //  imm(reg1,reg2); (reg1,reg2) 
+            od->type = MEM_REG1_REG2;
+        } else if (count_comma == 2) {
+            if (reg1_len == 0) {
+                // imm(,reg2,scal); (,reg2,scal)
+                od->type = MEM_REG2_SCAL;
+            } else {
+                 // imm(reg1,reg2,scal); (reg1,reg2,scal)
+                 od->type = MEM_REG1_REG2_SCAL;
+            }
+        }
+
+        // bias 1 for MEM_IMM_[.*]
+        if (imm_len > 0) {
+            od->type ++;
+        }
+
     }
 }
 
@@ -433,5 +518,41 @@ void print_stack(core_t *cr) {
         }
         printf("\n");
         va -= 8;
+    }
+}
+
+void TestParsingOperand()
+{
+    ACTIVE_CORE = 0x0;    
+    core_t *ac = (core_t *)&cores[ACTIVE_CORE];
+
+    const char *strs[11] = {
+        "$0x1234",
+        "%rax",
+        "0xabcd",
+        "(%rsp)",
+        "0xabcd(%rsp)",
+        "(%rsp,%rbx)",
+        "0xabcd(%rsp,%rbx)",
+        "(,%rbx,8)",
+        "0xabcd(,%rbx,8)",
+        "(%rsp,%rbx,8)",
+        "0xabcd(%rsp,%rbx,8)",
+    };
+    
+    printf("rax %p\n", &(ac->reg.rax));
+    printf("rsp %p\n", &(ac->reg.rsp));
+    printf("rbx %p\n", &(ac->reg.rbx));
+    
+    for (int i = 0; i < 11; ++ i) {
+        od_t od;
+        parse_operand(strs[i], &od, ac);
+
+        printf("\n%s\n", strs[i]);
+        printf("od enum type: %d\n", od.type);
+        printf("od imm: %lx\n", od.imm);
+        printf("od reg1: %lx\n", od.reg1);
+        printf("od reg2: %lx\n", od.reg2);
+        printf("od scal: %lx\n", od.scal);
     }
 }

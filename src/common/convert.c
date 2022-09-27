@@ -19,8 +19,6 @@ uint64_t string2uint_range(const char *str, int start, int end) {
 
     // DFA
     int state = 0;
-    // [state][input]
-    int dfa[256][100];
 
     for (int i  = start; i <= end; i ++) {
         char c = str[i];
@@ -84,7 +82,6 @@ uint64_t string2uint_range(const char *str, int start, int end) {
         } else if (state == 4) {
             if (('0' <= c && c <= '9')) {
                 state = 5;
-                uint64_t delta = 
                 uval = uval * 16 + (c - '0'); } else if ('a' <= c && c <= 'f') { state = 5;
                 uval = uval * 16 + (c - 'a' + 10);
             } else if ('A' <= c && c <= 'F') {
@@ -118,7 +115,6 @@ uint64_t string2uint_range(const char *str, int start, int end) {
             continue;
         } else if (state == 6) {
             if (c == ' ') {
-                state = 6;
                 continue;
             } else {
                 goto fail;
@@ -142,6 +138,7 @@ uint64_t string2uint_range(const char *str, int start, int end) {
 
     fail:
     printf("type converter: <%s> cannot be converted to integer\n", str);
+    exit(0);
 }
 
 // convert uint32_t to its float

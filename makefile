@@ -1,8 +1,9 @@
-CC = /usr/bin/gcc
+
+CC = /usr/bin/gcc-7
 # CFLAGS = -Wall -g -O2 -Werror -std=gnu99 -Wno-unused-function
 CFLAGS = -Wall -g -O2 -std=gnu99 -Wno-unused-function
 
-EXE_HARDWARE = exe_hardware
+TARGET_HARDWARE = ./bin/test_hardware
 
 SRC_DIR = ./src
 
@@ -14,12 +15,12 @@ CPU =$(SRC_DIR)/hardware/cpu/mmu.c $(SRC_DIR)/hardware/cpu/isa.c
 MEMORY = $(SRC_DIR)/hardware/memory/dram.c
 
 # main
-MAIN_HARDWARE = $(SRC_DIR)/main_hardware.c
+TEST_HARDWARE = $(SRC_DIR)/tests/test_hardware.c
 
 .PHONY:hardware
 hardware:
-	$(CC) $(CFLAGS) -I$(SRC_DIR) $(COMMON) $(CPU) $(MEMORY) $(DISK) $(MAIN_HARDWARE) -o $(EXE_HARDWARE)
-	./$(EXE_HARDWARE)
+	$(CC) $(CFLAGS) -I$(SRC_DIR) $(COMMON) $(CPU) $(MEMORY) $(TEST_HARDWARE) -o $(TARGET_HARDWARE)
+	./$(TARGET_HARDWARE)
 
 clean:
-	rm -f *.o *~ $(EXE_HARDWARE)
+	rm -f *.o *~ $(TARGET_HARDWARE)
