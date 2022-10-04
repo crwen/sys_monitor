@@ -296,14 +296,20 @@ static void parse_operand(const char *str, od_t *od, core_t *cr) {
                     // imm
                     imm[imm_len] = str[i];
                     imm_len ++;
-                } else if (count_comma == 1) {
+                } else if (count_parentheses == 1) {
+                    if (count_comma == 0) {
+                        // ...(reg1
+                        reg1[reg1_len] = str[i];
+                        reg1_len ++;
+                    } else if (count_comma == 1) {
                     // ???(???,xxx
-                    reg2[reg2_len] = str[i];
-                    reg2_len ++;
-                } else if (count_comma == 2) {
-                    // ???(???,???,xxx
-                    scal[scal_len] = str[i];
-                    scal_len ++;
+                        reg2[reg2_len] = str[i];
+                        reg2_len ++;
+                    } else if (count_comma == 2) {
+                        // ???(???,???,xxx
+                        scal[scal_len] = str[i];
+                        scal_len ++;
+                    }
                 }
             }
         }
@@ -347,7 +353,7 @@ static void parse_operand(const char *str, od_t *od, core_t *cr) {
                 od->type = MEM_REG2_SCAL;
             } else {
                  // imm(reg1,reg2,scal); (reg1,reg2,scal)
-                 od->type = MEM_REG1_REG2_SCAL;
+                od->type = MEM_REG1_REG2_SCAL;
             }
         }
 
@@ -545,16 +551,21 @@ static void sub_handler(od_t *src_od, od_t *dst_od, core_t *cr) {
     uint64_t dst = decode_operand(dst_od);
 
     if (src_od->type == IMM && dst_od->type == REG) {
-        // src: register (value: int64_t bit map)
+        // src: imm
         // dst: register (value: int64_t bit map)
         // dst = dst - src
         uint64_t val = *(uint64_t *)dst + (~src + 1);
 
+        int val_sign = ((val >> 63) & 0x1);
+        int src_sign = ((src >> 63) & 0x1);
+        int dst_sign = ((*(uint64_t *)dst >> 63) & 0x1);
+
         // set condition flags
-        cr->flags.CF = 0; // unsigned
+        cr->flags.CF = (val > src); // unsigned
         cr->flags.ZF = (val == 0);
         cr->flags.SF = ((val >> 63) & 0x1);
-        cr->flags.OF = 0; // singed
+        cr->flags.OF = (src_sign == 1 && dst_sign == 0 && val_sign == 1) || 
+                            (src_sign == 0 && dst_sign == 1 && val_sign == 0);
 
         // update registers
         *(uint64_t *)dst = val;

@@ -1,4 +1,5 @@
 // Dynamic Random Access Memory
+#include<string.h>
 #include<headers/cpu.h>
 #include<headers/memory.h>
 #include<headers/common.h>

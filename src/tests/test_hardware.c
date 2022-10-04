@@ -180,8 +180,7 @@ static void TestSumRecursiveCondition() {
 
     printf("begin\n");
     int time = 0;
-    while ((cr->rip <= 18 * 0x40 + 0x00400000) &&
-           time < MAX_NUM_INSTRUCTION_CYCLE) {
+    while ((cr->rip <= 18 * 0x40 + 0x00400000) && time < MAX_NUM_INSTRUCTION_CYCLE) {
         instruction_cycle(cr);
         print_register(cr);
         print_stack(cr);
