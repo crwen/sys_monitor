@@ -436,14 +436,14 @@ static void mov_handler(od_t *src_od, od_t *dst_od, core_t *cr) {
     } else if (src_od->type == REG && dst_od->type >= MEM_IMM) {
         // src: register
         // dst: virtual address
-        write64bits_dram(va2pa(dst, cr), *(uint64_t *)src, cr);
+        write64bits_dram(va2pa(dst, cr), *(uint64_t *)src);
         next_rip(cr);
         reset_cflags(cr);
         return;
     } else if (src_od->type >= MEM_IMM && dst_od->type == REG) {
         // src: virtual address
         // dst: register
-        *(uint64_t *)dst = read64bits_dram(va2pa(src, cr), cr);
+        *(uint64_t *)dst = read64bits_dram(va2pa(src, cr));
         next_rip(cr);
         reset_cflags(cr);
         return;
@@ -465,7 +465,7 @@ static void push_handler(od_t *src_od, od_t *dst_od, core_t *cr) {
         // src: register
         // dst: empty
         (cr->reg).rsp = (cr->reg).rsp - 8;
-        write64bits_dram(va2pa((cr->reg).rsp, cr), *(uint64_t *)src, cr);
+        write64bits_dram(va2pa((cr->reg).rsp, cr), *(uint64_t *)src);
         next_rip(cr);
         reset_cflags(cr);
         return;
@@ -479,7 +479,7 @@ static void pop_handler(od_t *src_od, od_t *dst_od, core_t *cr) {
     if (src_od->type == REG) {
         // src: register
         // dst: empty
-        uint64_t old_val = read64bits_dram(va2pa((cr->reg).rsp, cr), cr);
+        uint64_t old_val = read64bits_dram(va2pa((cr->reg).rsp, cr));
         (cr->reg).rsp = (cr->reg).rsp + 8;
         *(uint64_t *)src = old_val;
         next_rip(cr);
@@ -492,7 +492,7 @@ static void leave_handler(od_t *src_od, od_t *dst_od, core_t *cr){
     // movq %rbp, %rsp
     cr->reg.rsp = cr->reg.rbp;
     // pop %rbp
-    uint64_t old_val = read64bits_dram(va2pa((cr->reg).rsp, cr), cr);
+    uint64_t old_val = read64bits_dram(va2pa((cr->reg).rsp, cr));
     (cr->reg).rsp = (cr->reg).rsp + 8;
     (cr->reg).rbp = old_val;
     next_rip(cr);
@@ -507,7 +507,7 @@ static void call_handler(od_t *src_od, od_t *dst_od, core_t *cr) {
     // dst: empty
     // push the return value
     (cr->reg).rsp = (cr->reg).rsp - 8;
-    write64bits_dram(va2pa((cr->reg).rsp, cr), cr->rip + sizeof(char) * MAX_INSTRUCTION_CHAR, cr);
+    write64bits_dram(va2pa((cr->reg).rsp, cr), cr->rip + sizeof(char) * MAX_INSTRUCTION_CHAR);
     // jump to target function address
     cr->rip = src;
     reset_cflags(cr);
@@ -520,7 +520,7 @@ static void ret_handler(od_t *src_od, od_t *dst_od, core_t *cr) {
     // src: empty
     // dst: empty
     // pop rsp
-    uint64_t ret_addr = read64bits_dram(va2pa((cr->reg).rsp, cr), cr);
+    uint64_t ret_addr = read64bits_dram(va2pa((cr->reg).rsp, cr));
     (cr->reg).rsp = (cr->reg).rsp + 8;
     // jump to return address
     cr->rip = ret_addr;
@@ -591,7 +591,7 @@ static void cmp_handler(od_t *src_od, od_t *dst_od, core_t *cr) {
         // src: imm
         // dst: mem 
         // dst = dst - src
-        uint64_t dval = read64bits_dram(va2pa(dst, cr), cr);
+        uint64_t dval = read64bits_dram(va2pa(dst, cr));
         uint64_t val = dval + (~src + 1);
 
         int val_sign = ((val >> 63) & 0x1);
@@ -636,7 +636,7 @@ static void jmp_handler(od_t *src_od, od_t *dst_od, core_t *cr) {
 void instruction_cycle(core_t *cr) {
     // FETCH: get the instruction string by program counter
     char inst_str[MAX_INSTRUCTION_CHAR + 10];
-    readinst_dram(va2pa(cr->rip, cr), inst_str, cr);
+    readinst_dram(va2pa(cr->rip, cr), inst_str);
     debug_printf(DEBUG_INSTRUCTIONCYCLE, "%lx    %s\n", cr->rip, inst_str);
 
     // DECODE: decode the run-time instruction operands
