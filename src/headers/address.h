@@ -1,3 +1,5 @@
+// include guards to prevent double declaration of any identifiers 
+// such as types, enums and static variables
 #ifndef ADDRESS_GUARD
 #define ADDRESS_GUARD
 

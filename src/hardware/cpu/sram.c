@@ -1,7 +1,6 @@
-#ifndef SRAM_GUARD
-#define SRAM_GUARD
 
-#include "hardware/cpu/address.h"
+#include "headers/address.h"
+#include "headers/memory.h"
 #include <stdint.h>
 
 #define NUM_CACHE_LINE_PER_SET (8)
@@ -50,13 +49,16 @@ uint8_t sram_cache_read(address_t paddr) {
         sram_cacheline_t line = set.lines[i];
         if (line.state != CACHE_LINE_INVALID && line.tag == paddr.CT) {
             // cache hit
+
+            // TODO: upate replacer according to replacement policy
             return line.block[paddr.CO];
         }
-
-        // cache miss, load from memory
-        // TODO: upate LRU
-        // TODO: select one victim by replacement policy if set is full
     }
+    
+    // cache miss, load from memory
+    // TODO: update LRU
+    // TODO: select one victim by replacement policy if set is full
+    // update line state
     return 0;
 }
 
@@ -69,14 +71,24 @@ void sram_cache_write(address_t paddr, uint8_t data) {
         if (line.state != CACHE_LINE_INVALID && line.tag == paddr.CT) {
             // cache hit
             line.block[paddr.CO] = data;
-            // TODO write to memory
+
+            // write-through and no write allocate
+            // write data block to memory
+            uint64_t base = (paddr.paddr_value >> SRAM_CACHE_OFFSET_LENGTH) << SRAM_CACHE_OFFSET_LENGTH;
+            int line_num = (1 >> SRAM_CACHE_OFFSET_LENGTH) / sizeof(uint64_t);
+
+            for (int j = 0; j < line_num; j ++) {
+                write64bits_dram(base + sizeof(uint64_t) * j, *(uint64_t *)&(line.block[sizeof(uint64_t) * j]));
+            }
+
+            // TODO: upate replacer according to replacement policy
+
             return ;
         }
-
-        // cache miss, load from memory
-        // TODO: upate LRU
-        // TODO: select one victim by replacement policy if set is full
     }
-}
+    // cache miss, load from memory
+    // TODO: upate replacer
+    // TODO: select one victim by replacement policy if set is full
 
-#endif
+    // update line state
+}
