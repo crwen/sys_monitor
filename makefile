@@ -22,7 +22,7 @@ TEST_CACHE = $(SRC_DIR)/tests/test_cache.c
 
 .PHONY:hardware
 hardware:
-	$(CC) $(CFLAGS) -I$(SRC_DIR) $(COMMON) $(CPU) $(MEMORY) $(TEST_HARDWARE) -o $(TARGET_HARDWARE)
+	$(CC) $(CFLAGS) -I$(SRC_DIR) $(COMMON) $(CPU) $(MEMORY) $(CACHE) $(TEST_HARDWARE) -o $(TARGET_HARDWARE)
 	./$(TARGET_HARDWARE)
 
 clean:

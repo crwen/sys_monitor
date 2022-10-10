@@ -59,11 +59,11 @@ static void TestAddFunctionCallAndComputation() {
     cr->reg.rbp = 0x7ffffffee110;
     cr->reg.rsp = 0x7ffffffee0f0;
 
-    write64bits_dram(va2pa(0x7ffffffee110, cr), 0x0000000000000000); // rbp
-    write64bits_dram(va2pa(0x7ffffffee108, cr), 0x0000000000000000);
-    write64bits_dram(va2pa(0x7ffffffee100, cr), 0x0000000012340000);
-    write64bits_dram(va2pa(0x7ffffffee0f8, cr), 0x000000000000abcd);
-    write64bits_dram(va2pa(0x7ffffffee0f0, cr), 0x0000000000000000); // rsp
+    cpu_write64bits_dram(va2pa(0x7ffffffee110, cr), 0x0000000000000000); // rbp
+    cpu_write64bits_dram(va2pa(0x7ffffffee108, cr), 0x0000000000000000);
+    cpu_write64bits_dram(va2pa(0x7ffffffee100, cr), 0x0000000012340000);
+    cpu_write64bits_dram(va2pa(0x7ffffffee0f8, cr), 0x000000000000abcd);
+    cpu_write64bits_dram(va2pa(0x7ffffffee0f0, cr), 0x0000000000000000); // rsp
 
     // 2 before call
     // 3 after call before push
@@ -90,7 +90,7 @@ static void TestAddFunctionCallAndComputation() {
     };
 
     for (int i = 0; i < 15; ++ i) {
-        writeinst_dram(va2pa(i * 0x40 + 0x00400000, cr), assembly[i]);
+        cpu_writeinst_dram(va2pa(i * 0x40 + 0x00400000, cr), assembly[i]);
     }
     cr->rip = MAX_INSTRUCTION_CHAR * sizeof(char) * 11 + 0x00400000;
 
@@ -120,11 +120,11 @@ static void TestAddFunctionCallAndComputation() {
         printf("register mismatch\n");
     }
 
-    match = match && (read64bits_dram(va2pa(0x7ffffffee110, cr)) == 0x0000000000000000); // rbp
-    match = match && (read64bits_dram(va2pa(0x7ffffffee108, cr)) == 0x000000001234abcd);
-    match = match && (read64bits_dram(va2pa(0x7ffffffee100, cr)) == 0x0000000012340000);
-    match = match && (read64bits_dram(va2pa(0x7ffffffee0f8, cr)) == 0x000000000000abcd);
-    match = match && (read64bits_dram(va2pa(0x7ffffffee0f0, cr)) == 0x0000000000000000); // rsp
+    match = match && (cpu_read64bits_dram(va2pa(0x7ffffffee110, cr)) == 0x0000000000000000); // rbp
+    match = match && (cpu_read64bits_dram(va2pa(0x7ffffffee108, cr)) == 0x000000001234abcd);
+    match = match && (cpu_read64bits_dram(va2pa(0x7ffffffee100, cr)) == 0x0000000012340000);
+    match = match && (cpu_read64bits_dram(va2pa(0x7ffffffee0f8, cr)) == 0x000000000000abcd);
+    match = match && (cpu_read64bits_dram(va2pa(0x7ffffffee0f0, cr)) == 0x0000000000000000); // rsp
 
     if (match) {
         printf("memory match\n");
@@ -149,9 +149,9 @@ static void TestSumRecursiveCondition() {
 
     cr->flags.__flag_values = 0;
 
-    write64bits_dram(va2pa(0x7ffffffee230, cr), 0x0000000008000650);    // rbp
-    write64bits_dram(va2pa(0x7ffffffee228, cr), 0x0000000000000000);
-    write64bits_dram(va2pa(0x7ffffffee220, cr), 0x00007ffffffee310);    // rsp
+    cpu_write64bits_dram(va2pa(0x7ffffffee230, cr), 0x0000000008000650);    // rbp
+    cpu_write64bits_dram(va2pa(0x7ffffffee228, cr), 0x0000000000000000);
+    cpu_write64bits_dram(va2pa(0x7ffffffee220, cr), 0x00007ffffffee310);    // rsp
 
     char assembly[19][MAX_INSTRUCTION_CHAR] = {
         "push   %rbp",              // 0
@@ -177,7 +177,7 @@ static void TestSumRecursiveCondition() {
 
     // copy to physical memory
     for (int i = 0; i < 19; ++ i) {
-        writeinst_dram(va2pa(i * 0x40 + 0x00400000, cr), assembly[i]);
+        cpu_writeinst_dram(va2pa(i * 0x40 + 0x00400000, cr), assembly[i]);
     }
     cr->rip = MAX_INSTRUCTION_CHAR * sizeof(char) * 16 + 0x00400000;
 
@@ -207,9 +207,9 @@ static void TestSumRecursiveCondition() {
         printf("register mismatch\n");
     }
 
-    match = match && (read64bits_dram(va2pa(0x7ffffffee230, cr)) == 0x0000000008000650); // rbp
-    match = match && (read64bits_dram(va2pa(0x7ffffffee228, cr)) == 0x0000000000000006);
-    match = match && (read64bits_dram(va2pa(0x7ffffffee220, cr)) == 0x00007ffffffee310); // rsp
+    match = match && (cpu_read64bits_dram(va2pa(0x7ffffffee230, cr)) == 0x0000000008000650); // rbp
+    match = match && (cpu_read64bits_dram(va2pa(0x7ffffffee228, cr)) == 0x0000000000000006);
+    match = match && (cpu_read64bits_dram(va2pa(0x7ffffffee220, cr)) == 0x00007ffffffee310); // rsp
 
     if (match) {
         printf("memory match\n");
