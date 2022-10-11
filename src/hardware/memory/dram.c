@@ -23,8 +23,9 @@ uint64_t cpu_read64bits_dram(uint64_t paddr) {
         // little-endian
         uint64_t val = 0x0;
         for (int i = 0; i < 8; ++ i) {
-            val += (sram_cache_read(paddr + i) << (i * 8));
+            val += (((uint64_t)sram_cache_read(paddr + i)) << (i * 8));
         }
+
         return val;
     } else {
         // read from DRAM directly

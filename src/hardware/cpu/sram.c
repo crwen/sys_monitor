@@ -191,8 +191,7 @@ void sram_cache_write(uint64_t paddr_value, uint8_t data) {
             sprintf(trace_buf, "hit");
             cache_hit_count ++;
 
-            if (line->state == CACHE_LINE_CLEAN)
-            {
+            if (line->state == CACHE_LINE_CLEAN) {
                 dirty_bytes_in_cache_count += (1 << SRAM_CACHE_OFFSET_LENGTH);
             }
 #endif
