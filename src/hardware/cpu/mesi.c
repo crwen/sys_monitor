@@ -266,3 +266,31 @@ int write_cacheline(int i, int write_value) {
 
     return 0;
 }
+
+int evict_cacheline(int i) {
+    if (cache[i].state == MODIFIED) {
+        // write-back
+        mem_value = cache[i].value;
+        cache[i].state = INVALID;
+        cache[i].value = 0;
+
+        #ifdef DEBUG
+        printf("[%d] evict; write back value %d\n", i, cache[i].value);
+        #endif
+
+        return 1;
+    } else if (cache[i].state == EXCLUSIVE || cache[i].state == SHARED) {
+        cache[i].state = INVALID;
+        cache[i].value = 0;
+
+        #ifdef DEBUG
+        printf("[%d] evict\n", i);
+        #endif
+
+        return 1;
+    } else if (cache[i].state == INVALID) {
+        return 1;
+    }
+    
+    return 0;
+}
