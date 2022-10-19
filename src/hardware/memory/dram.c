@@ -107,7 +107,6 @@ void bus_read_cacheline(uint64_t paddr, uint8_t *block) {
 void bus_write_cacheline(uint64_t paddr, uint8_t *block) {
 
     uint64_t dram_base = ((paddr >> SRAM_CACHE_OFFSET_LENGTH)) << SRAM_CACHE_OFFSET_LENGTH;
-    uint64_t block_base = (uint64_t)block;
 
     for (int i = 0; i < (1 << SRAM_CACHE_OFFSET_LENGTH) ; i ++) {
         // write to memory
