@@ -230,6 +230,18 @@ typedef struct CORE_STRUCT {
     uint64_t    pdbr;   // page directory base register
 } core_t;
 
+// control registers
+typedef struct {
+    uint64_t cr0;
+    uint64_t cr1;
+    uint64_t cr2;
+    // should be a 40-bit PPN for PGD in DRAM
+    // but we are using 48-bit virtual address on simulator's heap(by malloc)
+    uint64_t cr3;
+} cpu_cr_t;
+cpu_cr_t cpu_controls;
+
+
 // define cpu core array to support core level parallelism
 #define NUM_CORES 1
 core_t cores[NUM_CORES];

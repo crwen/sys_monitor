@@ -50,10 +50,10 @@ typedef union {
             uint64_t vaddr_value : VIRTUAL_ADDRESS_LENGTH;
             struct {
                 uint64_t vpo : VIRTUAL_PAGE_OFFSET_LENGTH;
+                uint64_t vpn4 : VIRTUAL_PAGE_NUMBER_LENGTH;
                 uint64_t vpn3 : VIRTUAL_PAGE_NUMBER_LENGTH;
                 uint64_t vpn2 : VIRTUAL_PAGE_NUMBER_LENGTH;
                 uint64_t vpn1 : VIRTUAL_PAGE_NUMBER_LENGTH;
-                uint64_t vpn0 : VIRTUAL_PAGE_NUMBER_LENGTH;
             };
         };
     };

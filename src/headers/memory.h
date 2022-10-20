@@ -16,6 +16,63 @@
 #define PHYSICAL_MEMORY_SPACE   65536
 #define MAX_INDEX_PHYSICAL_PAGE 15
 
+typedef union {
+    uint64_t pte_value;
+    struct {
+        uint64_t present        : 1;
+        uint64_t readonly       : 1;
+        uint64_t usermode       : 1;
+        uint64_t writethough    : 1;
+        uint64_t cachedisabled  : 1;
+        uint64_t reference      : 1;
+        uint64_t unused6        : 1;
+        uint64_t smallpage      : 1;
+        uint64_t global         : 1;
+        uint64_t unused9_11     : 3;
+        /*
+        uint64_t paddr          : 40;
+        uint64_t unused52_62    : 10;
+        
+        for malloc, a virtual address on heap is 48 bits
+        for real world, a physical page number is 40 bits
+        */
+       uint64_t paddr          : 50;
+       uint64_t xdisabled      : 1;
+    };
+
+    struct {
+        uint64_t _present       : 1;
+        uint64_t swap_id        : 63; // disk address
+    };
+} pte123_t; // pgd pud pmd
+
+
+typedef union {
+    uint64_t pte_value;
+    struct {
+        uint64_t present        : 1;
+        uint64_t readonly       : 1;
+        uint64_t usermode       : 1;
+        uint64_t writethough    : 1;
+        uint64_t reference      : 1;
+        uint64_t cachedisabled  : 1;
+        uint64_t dirty          : 1;
+        uint64_t zero7          : 1;
+        uint64_t global         : 1;
+        uint64_t unused9_11     : 3;
+        uint64_t ppn            : 40;
+        uint64_t unused52_62    : 10;
+        uint64_t xdisabled      : 1;
+    };
+
+    struct {
+        uint64_t _present       : 1;
+        uint64_t swap_id        : 63; // disk address
+    };
+} pte4_t;
+
+
+
 // physical memory
 // 16 physical memory pages
 uint8_t pm[PHYSICAL_MEMORY_SPACE];
