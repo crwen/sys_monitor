@@ -637,7 +637,7 @@ void instruction_cycle(core_t *cr) {
     // FETCH: get the instruction string by program counter
     char inst_str[MAX_INSTRUCTION_CHAR + 10];
     cpu_readinst_dram(va2pa(cr->rip, cr), inst_str);
-    debug_printf(DEBUG_INSTRUCTIONCYCLE, "%lx    %s\n", cr->rip, inst_str);
+    debug_printf(DEBUG_INSTRUCTIONCYCLE, "%llx    %s\n", cr->rip, inst_str);
 
     // DECODE: decode the run-time instruction operands
     inst_t inst;
@@ -656,11 +656,11 @@ void print_register(core_t *cr) {
 
     reg_t reg = cr->reg;
 
-    printf("rax = %16lx\trbx = %16lx\trcx = %16lx\trdx = %16lx\n",
+    printf("rax = %16llx\trbx = %16llx\trcx = %16llx\trdx = %16llx\n",
         reg.rax, reg.rbx, reg.rcx, reg.rdx);
-    printf("rsi = %16lx\trdi = %16lx\trbp = %16lx\trsp = %16lx\n",
+    printf("rsi = %16llx\trdi = %16llx\trbp = %16llx\trsp = %16llx\n",
         reg.rsi, reg.rdi, reg.rbp, reg.rsp);
-    printf("rip = %16lx\n", cr->rip);
+    printf("rip = %16llx\n", cr->rip);
     printf("CF = %u\tZF = %u\tSF = %u\tOF = %u\n",
         cr->flags.CF, cr->flags.ZF, cr->flags.SF, cr->flags.OF);
 }
@@ -677,7 +677,7 @@ void print_stack(core_t *cr) {
 
     for (int i = 0; i < 2 * n; ++ i) {
         uint64_t *ptr = (uint64_t *)(high - i);
-        printf("0x%16lx : %16lx", va, (uint64_t)*ptr);
+        printf("0x%16llx : %16llx", va, (uint64_t)*ptr);
 
         if (i == n) {
             printf(" <== rsp");
@@ -744,9 +744,9 @@ void TestParsingOperand() {
 
         printf("\n%s\n", strs[i]);
         printf("od enum type: %d\n", od.type);
-        printf("od imm: %lx\n", od.imm);
-        printf("od reg1: %lx\n", od.reg1);
-        printf("od reg2: %lx\n", od.reg2);
-        printf("od scal: %lx\n", od.scal);
+        printf("od imm: %llx\n", od.imm);
+        printf("od reg1: %llx\n", od.reg1);
+        printf("od reg2: %llx\n", od.reg2);
+        printf("od scal: %llx\n", od.scal);
     }
 }

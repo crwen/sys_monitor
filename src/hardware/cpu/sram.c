@@ -286,7 +286,7 @@ void print_cache() {
                 break;
             }
 
-            printf("(%lx: %c, %d), ", line.tag, state, line.time);
+            printf("(%llx: %c, %d), ", line.tag, state, line.time);
         }
 
         printf("\b\b ]\n");
